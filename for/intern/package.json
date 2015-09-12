@@ -1,0 +1,8 @@
+{
+  "name": "0-test-for-intern",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "intern": "^3.0.2"
+  }
+}
