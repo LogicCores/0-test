@@ -2,8 +2,6 @@
 exports.forLib = function (LIB) {
     var ccjson = this;
 
-    const SERVER = require("./0-server.api");
-
     return LIB.Promise.resolve({
         forConfig: function (defaultConfig) {
 
@@ -17,6 +15,8 @@ exports.forLib = function (LIB) {
 
                     return LIB.Promise.resolve({
                         app: function () {
+
+                            const SERVER = require("./0-server.api");
 
                             return LIB.Promise.resolve(
                                 ccjson.makeDetachedFunction(
