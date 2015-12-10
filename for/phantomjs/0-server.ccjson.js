@@ -59,7 +59,7 @@ exports.forLib = function (LIB) {
                                         });
                                     }
                                     return waitUntilStarted();
-                                }).timeout(5 * 1000).catch(LIB.Promise.TimeoutError, function () {
+                                }).timeout(30 * 1000).catch(LIB.Promise.TimeoutError, function () {
                                     result.killDeep();
                                     throw new Error("Timeout connecting to phantomjs webdriver port 4444!");
                                 }).then(function () {
