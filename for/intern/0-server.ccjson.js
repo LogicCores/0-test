@@ -106,6 +106,8 @@ exports.forLib = function (LIB) {
                         filename: LIB.path.join(config.testResultPath, 'runner.client.report.xml')
                     });
 
+                    // TODO: Write code coverage reports: http://theintern.github.io/intern/#reporter-lcov
+
                     Object.keys(testSuites).forEach(function (suiteId) {
                         var suiteConfig = testSuites[suiteId];
                         var propertyName = null;
