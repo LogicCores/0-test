@@ -29,15 +29,21 @@ exports.forLib = function (LIB) {
                         function ensureInstalled () {
                             // TODO: Make version configurable.
                             return LIB.runbash([
-                                'BO_ensureInSystemCache DOWNLOADED_PATH \\',
-                                '    "bitbucket.org/ariya/phantomjs/downloads/phantomjs" \\',
-                                '    "2.0.0" \\',
-                                '    "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.0.0-macosx.zip"',
-                                'echo "DOWNLOADED_PATH: $DOWNLOADED_PATH"',
-                                // Now we check to make sure it runs
-                                // @see https://github.com/ariya/phantomjs/issues/12900#issuecomment-85198514
-                                'brew install upx || true',
-                                'upx -d $DOWNLOADED_PATH/bin/phantomjs || true'
+                                'if BO_has "phantomjs"; then',
+                                    'echo "DOWNLOADED_PATH: $(which phantomjs)"',
+                                'else',
+                                    // Assuming OSX. Use 'BO_if_os' & 'BO_if_nix' to install for other platforms.
+                                    // TODO: Move into 'bash.origin.plantomjs'
+                                    'BO_ensureInSystemCache DOWNLOADED_PATH \\',
+                                    '    "bitbucket.org/ariya/phantomjs/downloads/phantomjs" \\',
+                                    '    "2.0.0" \\',
+                                    '    "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.0.0-macosx.zip"',
+                                    'echo "DOWNLOADED_PATH: $DOWNLOADED_PATH/bin/phantomjs"',
+                                    // Now we check to make sure it runs
+                                    // @see https://github.com/ariya/phantomjs/issues/12900#issuecomment-85198514
+                                    'brew install upx || true',
+                                    'upx -d $DOWNLOADED_PATH/bin/phantomjs || true',
+                                'fi'
                             ], {
                                 wrappers: {
                                     "bash.origin": true
@@ -50,13 +56,13 @@ exports.forLib = function (LIB) {
                             });
                         }
 
-                        function ensureStarted (basePath) {
+                        function ensureStarted (binPath) {
                             if (running) {
                                 return running;
                             }
                             return (running = LIB.runbash([
                                 // @see https://github.com/ariya/phantomjs/issues/13165#issuecomment-157544910
-                                basePath + '/bin/phantomjs --disk-cache=true --webdriver=4444'
+                                binPath + ' --disk-cache=true --webdriver=4444'
                             ], {
                                 verbose: LIB.VERBOSE,
                                 wait: false
@@ -89,8 +95,8 @@ exports.forLib = function (LIB) {
                         }
 
                         self.start = function () {
-                            return ensureInstalled().then(function (basePath) {
-                                return ensureStarted(basePath);
+                            return ensureInstalled().then(function (binPath) {
+                                return ensureStarted(binPath);
                             }).then(function () {
                                 return null;
                             });
