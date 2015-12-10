@@ -14,6 +14,11 @@ exports.forLib = function (LIB) {
                 config = ccjson.attachDetachedFunctions(config);
 
 
+                if (!LIB.fs.existsSync(config.testResultPath)) {
+                    LIB.fs.mkdirsSync(config.testResultPath);
+                }
+
+
                 var testSuites = {}
 
                 if (config.suites) {
@@ -90,6 +95,16 @@ exports.forLib = function (LIB) {
 
                     var serverConfig = LIB._.cloneDeep(testConfig);
                     var runnerClientConfig = LIB._.cloneDeep(testConfig);
+                    
+                    serverConfig.reporters.push({
+                        id: 'JUnit',
+                        filename: LIB.path.join(config.testResultPath, 'server.report.xml')
+                    });
+
+                    runnerClientConfig.reporters.push({
+                        id: 'JUnit',
+                        filename: LIB.path.join(config.testResultPath, 'runner.client.report.xml')
+                    });
 
                     Object.keys(testSuites).forEach(function (suiteId) {
                         var suiteConfig = testSuites[suiteId];
