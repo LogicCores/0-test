@@ -83,7 +83,10 @@ exports.forLib = function (LIB) {
                     	],
                     	loaderOptions: {
                     		packages: [
-                    //			{ name: 'todo', location: 'js' }
+                    			{
+                    			    name: 'app',
+                    			    location: '.'
+                    			}
                     		]
                     	},
                     	suites: [
@@ -134,10 +137,10 @@ console.error("// TODO: Add paths to cache written test harnesses instead of dir
 process.exit(1);
                         }
                         if (suiteConfig.containers["server"]) {
-                            serverConfig[propertyName].push(relativeModulePath);
+                            serverConfig[propertyName].push("app/" + relativeModulePath);
                         }
                         if (suiteConfig.containers["browser"]) {
-                            runnerClientConfig[propertyName].push(relativeModulePath);
+                            runnerClientConfig[propertyName].push("app/" + relativeModulePath);
                         }
                     });
 
@@ -161,7 +164,7 @@ process.exit(1);
                 var api = {
                     run: function () {
 
-                        var relativeInternPath = LIB.path.relative(process.cwd(), LIB.path.join(__dirname, "node_modules/intern"));
+                        var internPath = LIB.path.join(__dirname, "node_modules/intern");
                         var relativeServerConfigPath = LIB.path.relative(process.cwd(), serverConfigPath);
                         var relativeRunnerClientConfigPath = LIB.path.relative(process.cwd(), runnerClientConfigPath);
 
@@ -170,7 +173,7 @@ process.exit(1);
                         function runServerTests () {
                             if (LIB.VERBOSE) console.log("Running server tests using config '" + relativeServerConfigPath + "' ...");
                             return LIB.runbash([
-                                'BO_run_node ' + relativeInternPath + '/client.js config=' + relativeServerConfigPath.replace(/\.js$/, "")
+                                'BO_run_node ' + internPath + '/client.js config=' + relativeServerConfigPath.replace(/\.js$/, "")
                             ], {
                                 verbose: LIB.VERBOSE,
                                 progress: true,
@@ -190,7 +193,7 @@ process.exit(1);
                             return serverdriver.start().then(function () {
                                 return webdriver.start().then(function () {
                                     return LIB.runbash([
-                                        'BO_run_node ' + relativeInternPath + '/runner.js config=' + relativeRunnerClientConfigPath.replace(/\.js$/, "")
+                                        'BO_run_node ' + internPath + '/runner.js config=' + relativeRunnerClientConfigPath.replace(/\.js$/, "")
                                     ], {
                                         verbose: LIB.VERBOSE,
                                         progress: true,
