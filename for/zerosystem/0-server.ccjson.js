@@ -43,11 +43,13 @@ exports.forLib = function (LIB) {
                                         if (LIB.VERBOSE) console.log("Check status:", "http://127.0.0.1:8090/.status");
                                         LIB.request.get("http://127.0.0.1:8090/.status", function (err, response) {
                                             if (err) {
+                                                if (LIB.VERBOSE) console.log("err.code:", err.code);
                                                 if (err.code === "ECONNREFUSED") {
                                                     return setTimeout(waitUntilStarted, 250);
                                                 }
                                                 return reject(err);
                                             }
+                                            if (LIB.VERBOSE) console.log('response.headers["x-server-booted"]:', response.headers["x-server-booted"]);
                                             if (response.headers["x-server-booted"] === "1") {
                                                 return resolve();
                                             }
@@ -56,9 +58,9 @@ exports.forLib = function (LIB) {
                                         });
                                     }
                                     return waitUntilStarted();
-                                }).timeout(15 * 1000).catch(LIB.Promise.TimeoutError, function () {
+                                }).timeout(30 * 1000).catch(LIB.Promise.TimeoutError, function () {
                                     return result.killDeep().then(function () {
-                                        throw new Error("Timeout connecting to zerosystem!");
+                                        throw new Error("Timeout connecting to zerosystem (30 sec)!");
                                     });
                                 }).then(function () {
                                     return result;

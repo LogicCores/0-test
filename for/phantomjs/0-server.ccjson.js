@@ -61,7 +61,7 @@ exports.forLib = function (LIB) {
                                     return waitUntilStarted();
                                 }).timeout(30 * 1000).catch(LIB.Promise.TimeoutError, function () {
                                     result.killDeep();
-                                    throw new Error("Timeout connecting to phantomjs webdriver port 4444!");
+                                    throw new Error("Timeout connecting to phantomjs webdriver port 4444 (30 sec)!");
                                 }).then(function () {
                                     return result;
                                 });
